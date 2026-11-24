@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memoria de valores</title>
+<style>
+  :root{
+    --cream:#FFF9EE; --green:#0B4A2E; --pink:#F25C9C; --coral:#FF6F5B;
+    --yellow:#FBD92F; --blue:#3BB8EE; --purple:#9B7BF0; --white:#fff;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',system-ui,sans-serif;background:var(--cream);color:var(--green);min-height:100vh;display:flex;justify-content:center;padding:18px}
+  .wrap{width:100%;max-width:860px}
+  header{text-align:center;margin-bottom:14px}
+  .tag{font-size:11px;letter-spacing:3px;font-weight:600;color:var(--pink);text-transform:uppercase}
+  h1{font-family:'Poppins','Trebuchet MS',sans-serif;font-size:clamp(24px,4vw,34px);font-weight:700;margin:2px 0}
+  .sub{font-size:14px;opacity:.85}
+  .steps{display:flex;justify-content:center;gap:8px;margin:12px 0}
+  .step{padding:6px 14px;border-radius:999px;font-size:12px;font-weight:600;background:#fff;border:2px solid #f3d9e5;color:#b88aa0}
+  .step.on{background:var(--pink);border-color:var(--pink);color:#fff}
+  .step.done{background:var(--green);border-color:var(--green);color:#fff}
+  .bar{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin-bottom:10px}
+  .pill{background:#fff;border-radius:999px;padding:5px 12px;box-shadow:0 2px 0 #f0e4cf}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  @media(max-width:620px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .card{height:150px;cursor:pointer;border-radius:18px;position:relative;transition:transform .15s}
+  .card:hover{transform:translateY(-3px)}
+  .face{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px;text-align:center}
+  .back{background:#0B4A2E;color:#FBD92F;font-size:44px;font-weight:700;box-shadow:0 4px 0 #062c1b}
+  .back span{display:block;font-size:11px;letter-spacing:2px;color:#fff;opacity:.7;font-weight:600;margin-top:4px}
+  .front{display:none;background:#fff;border:3px solid #3BB8EE;font-size:13px;line-height:1.35}
+  .card.flip .front,.card.match .front{display:flex}
+  .card.flip .back,.card.match .back{display:none}
+  .front.vh{border-color:#FF6F5B}
+  .front .k{font-size:10px;letter-spacing:2px;font-weight:600;text-transform:uppercase;margin-bottom:6px;color:#3BB8EE}
+  .front.vh .k{color:#FF6F5B}
+  .front .v{font-size:18px;font-weight:700;line-height:1.15}
+  .front .h{font-size:12px;margin-top:4px;opacity:.8}
+  .card.match .front{background:#e9f8ef;border-color:#2fb36b}
+  .card.wrong{animation:shake .4s}
+  @keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .msg{min-height:44px;margin-top:12px;text-align:center;font-size:14px;font-weight:500;padding:10px;border-radius:14px}
+  .msg.ok{background:#e9f8ef}
+  .msg.no{background:#fde8ef}
+  .btn{font-family:'Poppins','Trebuchet MS',sans-serif;font-weight:600;font-size:16px;border:none;border-radius:999px;padding:11px 22px;cursor:pointer;background:var(--yellow);color:var(--green);box-shadow:0 4px 0 #d8b915;transition:transform .1s}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #d8b915}
+  .btn.alt{background:#fff;box-shadow:0 4px 0 #eadfcb}
+  .center{text-align:center;margin-top:14px}
+  .hide{display:none!important}
+  .panel{background:#fff;border-radius:22px;padding:22px;box-shadow:0 4px 0 #f0e4cf}
+  .q-k{font-size:11px;letter-spacing:2px;font-weight:600;color:var(--pink);text-transform:uppercase}
+  .q{font-family:'Poppins','Trebuchet MS',sans-serif;font-size:clamp(18px,2.6vw,22px);font-weight:600;margin:6px 0 16px;line-height:1.3}
+  .opt{display:block;width:100%;text-align:left;font-family:'Poppins';font-size:14px;background:var(--cream);border:2px solid #f0e4cf;border-radius:16px;padding:14px 16px;margin-bottom:10px;cursor:pointer;color:var(--green);transition:.15s}
+  .opt:hover:not(:disabled){border-color:var(--pink)}
+  .opt b{color:var(--pink);margin-right:6px}
+  .opt.good{background:#e9f8ef;border-color:#2fb36b}
+  .opt.bad{background:#fde8ef;border-color:var(--pink)}
+  .opt:disabled{cursor:default}
+  .fb{border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.45;margin-top:4px}
+  .fb.ok{background:#e9f8ef}
+  .fb.no{background:#fff4d6}
+  .fb strong{font-family:'Poppins','Trebuchet MS',sans-serif;font-size:16px;display:block;margin-bottom:3px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--green);color:#fff}
+  .medal{width:110px;height:110px;border-radius:50%;margin:4px auto 12px;display:flex;align-items:center;justify-content:center;font-family:'Poppins','Trebuchet MS',sans-serif;font-size:34px;font-weight:700;color:var(--green);box-shadow:0 5px 0 rgba(0,0,0,.12)}
+  .end h2{font-family:'Poppins','Trebuchet MS',sans-serif;font-size:28px;text-align:center}
+  .end p{text-align:center;font-size:14px;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="tag">Módulo 04 · Reto</div>
+    <h1>Memoria de valores</h1>
+    <p class="sub">Une cada situación con su valor + habilidad. Luego toma 2 decisiones.</p>
+  </header>
+
+  <div class="steps">
+    <span class="step on" id="s1">1 · Memoria</span>
+    <span class="step" id="s2">2 · Decisiones</span>
+    <span class="step" id="s3">3 · Resultado</span>
+  </div>
+
+  <section id="memory">
+    <div class="bar">
+      <span class="pill">Parejas: <span id="pairs">0</span>/4</span>
+      <span class="pill">Intentos: <span id="tries">0</span></span>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="msg" id="mmsg">Voltea dos cartas: una <b style="color:var(--blue)">situación</b> y un <b style="color:var(--coral)">valor + habilidad</b>.</div>
+    <div class="center hide" id="toDec"><button class="btn" onclick="startDecisions()">Ir a las decisiones ›</button></div>
+  </section>
+
+  <section id="decisions" class="hide">
+    <div class="panel">
+      <div class="q-k" id="dk"></div>
+      <div class="q" id="dq"></div>
+      <div id="dopts"></div>
+      <div id="dfb"></div>
+      <div class="center hide" id="dnext"><button class="btn" onclick="nextDecision()">Siguiente ›</button></div>
+    </div>
+  </section>
+
+  <section id="end" class="hide end">
+    <div class="panel">
+      <div class="medal" id="medal"></div>
+      <h2 id="etitle"></h2>
+      <p id="etext"></p>
+      <div class="center"><button class="btn alt" onclick="restart()">Jugar otra vez</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const PAIRS = [
+  {id:1, sit:"La profe cambia el ejercicio de saque porque los niños no alcanzan la red.", v:"Excelencia", h:"Resolución de problemas", why:"Adaptar el reto para que todos mejoren un poquito cada día."},
+  {id:2, sit:"Explica con calma por qué no se corre alrededor de la piscina.", v:"Respeto", h:"Comunicación", why:"Cuidar las reglas y a los demás con un mensaje claro."},
+  {id:3, sit:"Calma a dos niños que discuten por un penal.", v:"Respeto", h:"Int. emocional", why:"Regular emociones para cuidar el juego y a cada persona."},
+  {id:4, sit:"Arma equipos mixtos para que nadie juegue solo.", v:"Amistad", h:"Trabajo en equipo", why:"Jugar con el otro, no contra el otro."}
+];
+
+const DECISIONS = [
+  {
+    k:"Decisión 1 · Voleibol",
+    q:"Un niño te dice: “Profe, yo nunca toco el balón”. ¿Qué haces?",
+    opts:[
+      {t:"Cambio la regla: tres toques de jugadores distintos antes de pasar el balón.", ok:true,
+       fb:"¡Bien! Cambiar la regla asegura que todos participen. Así unes resolución de problemas con amistad.",
+       chips:["Amistad","Resolución de problemas"]},
+      {t:"Le pido que se esfuerce más y se mueva hacia el balón.", ok:false,
+       fb:"El esfuerzo importa, pero el problema está en cómo está organizado el juego. Si no cambias la regla, el niño sigue solo.",
+       chips:["Pista: cambia el juego, no al niño"]}
+    ]
+  },
+  {
+    k:"Decisión 2 · Natación",
+    q:"Tomás llora porque perdió el relevo y dice que ya no quiere nadar. ¿Qué haces?",
+    opts:[
+      {t:"“No llores, así es el deporte. ¡Vuelve al agua!”", ok:false,
+       fb:"Minimizar lo que siente puede hacer que se aleje del deporte. Primero hay que reconocer la emoción.",
+       chips:["Pista: escucha antes de corregir"]},
+      {t:"Me agacho a su altura, lo escucho, le digo que está bien sentirse triste y le muestro cuánto mejoró hoy.", ok:true,
+       fb:"¡Excelente! Usas inteligencia emocional y le muestras la excelencia: hacerlo un poquito mejor que ayer.",
+       chips:["Excelencia","Inteligencia emocional"]}
+    ]
+  }
+];
+
+let cards=[], open=[], lock=false, pairs=0, tries=0, dIdx=0, dScore=0;
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+function buildMemory(){
+  cards = shuffle(PAIRS.flatMap(p=>[{pid:p.id,type:"sit",p},{pid:p.id,type:"vh",p}]));
+  const g=document.getElementById("grid"); g.innerHTML="";
+  cards.forEach((c,i)=>{
+    const el=document.createElement("div");
+    el.className="card"; el.dataset.i=i;
+    const front = c.type==="sit"
+      ? `<div class="face front"><div class="k">Situación</div><div>${c.p.sit}</div></div>`
+      : `<div class="face front vh"><div class="k">Valor + habilidad</div><div class="v">${c.p.v}</div><div class="h">+ ${c.p.h}</div></div>`;
+    el.innerHTML=`<div class="face back">?<span>TOCA</span></div>${front}`;
+    el.onclick=()=>flip(el,c);
+    g.appendChild(el);
+  });
+}
+
+function setMsg(t,cls){const m=document.getElementById("mmsg");m.innerHTML=t;m.className="msg "+(cls||"")}
+
+function flip(el,c){
+  if(lock||el.classList.contains("flip")||el.classList.contains("match"))return;
+  el.classList.add("flip"); open.push({el,c});
+  if(open.length<2)return;
+  tries++; document.getElementById("tries").textContent=tries;
+  const [a,b]=open;
+  if(a.c.pid===b.c.pid && a.c.type!==b.c.type){
+    a.el.classList.add("match"); b.el.classList.add("match");
+    pairs++; document.getElementById("pairs").textContent=pairs;
+    setMsg(`<b>¡Pareja!</b> ${a.c.p.v} + ${a.c.p.h}: ${a.c.p.why}`,"ok");
+    open=[];
+    if(pairs===PAIRS.length){
+      setMsg(`<b>¡Memoria completa en ${tries} intentos!</b> Ahora pon a prueba tus decisiones.`,"ok");
+      document.getElementById("toDec").classList.remove("hide");
+    }
+  } else {
+    lock=true;
+    const sameType=a.c.type===b.c.type;
+    setMsg(sameType?"Elige una <b>situación</b> y un <b>valor + habilidad</b>.":"No es su pareja. ¡Intenta de nuevo!","no");
+    a.el.classList.add("wrong"); b.el.classList.add("wrong");
+    setTimeout(()=>{a.el.classList.remove("flip","wrong");b.el.classList.remove("flip","wrong");open=[];lock=false},1100);
+  }
+}
+
+function setStep(n){
+  ["s1","s2","s3"].forEach((id,i)=>{const e=document.getElementById(id);e.className="step"+(i+1<n?" done":i+1===n?" on":"")});
+}
+
+function startDecisions(){
+  document.getElementById("memory").classList.add("hide");
+  document.getElementById("decisions").classList.remove("hide");
+  setStep(2); dIdx=0; dScore=0; renderDecision();
+}
+
+function renderDecision(){
+  const d=DECISIONS[dIdx];
+  document.getElementById("dk").textContent=d.k;
+  document.getElementById("dq").textContent=d.q;
+  document.getElementById("dfb").innerHTML="";
+  document.getElementById("dnext").classList.add("hide");
+  const box=document.getElementById("dopts"); box.innerHTML="";
+  d.opts.forEach((o,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.innerHTML=`<b>${String.fromCharCode(65+i)})</b>${o.t}`;
+    b.onclick=()=>choose(i);
+    box.appendChild(b);
+  });
+}
+
+function choose(i){
+  const d=DECISIONS[dIdx], o=d.opts[i];
+  const btns=document.querySelectorAll("#dopts .opt");
+  btns.forEach((b,j)=>{b.disabled=true;if(d.opts[j].ok)b.classList.add("good")});
+  if(!o.ok)btns[i].classList.add("bad"); else dScore++;
+  document.getElementById("dfb").innerHTML=
+    `<div class="fb ${o.ok?"ok":"no"}"><strong>${o.ok?"¡Buena decisión!":"Piénsalo otra vez…"}</strong>${o.fb}
+     <div class="chips">${o.chips.map(c=>`<span class="chip">${c}</span>`).join("")}</div></div>`;
+  const n=document.getElementById("dnext"); n.classList.remove("hide");
+  n.querySelector("button").textContent = dIdx<DECISIONS.length-1?"Siguiente ›":"Ver resultado ›";
+}
+
+function nextDecision(){
+  dIdx++;
+  if(dIdx<DECISIONS.length)renderDecision(); else showEnd();
+}
+
+function showEnd(){
+  document.getElementById("decisions").classList.add("hide");
+  document.getElementById("end").classList.remove("hide");
+  setStep(3);
+  const m=document.getElementById("medal"), t=document.getElementById("etitle"), x=document.getElementById("etext");
+  const memGood = tries<=6;
+  if(dScore===2 && memGood){m.style.background="var(--yellow)";m.textContent="ORO";t.textContent="¡Medalla de oro!";}
+  else if(dScore>=1){m.style.background="#d9dde3";m.textContent="PLATA";t.textContent="¡Medalla de plata!";}
+  else{m.style.background="#e7a768";m.textContent="BRONCE";t.textContent="¡Medalla de bronce!";}
+  x.innerHTML=`Memoria: ${tries} intentos · Decisiones: ${dScore}/2.<br>Recuerda: un valor se enseña mejor cuando lo acompañas de una habilidad.`;
+}
+
+function restart(){
+  pairs=0;tries=0;open=[];lock=false;
+  document.getElementById("pairs").textContent=0;
+  document.getElementById("tries").textContent=0;
+  document.getElementById("end").classList.add("hide");
+  document.getElementById("memory").classList.remove("hide");
+  document.getElementById("toDec").classList.add("hide");
+  setMsg('Voltea dos cartas: una <b style="color:var(--blue)">situación</b> y un <b style="color:var(--coral)">valor + habilidad</b>.');
+  setStep(1); buildMemory();
+}
+
+buildMemory();
+</script>
+</body>
+</html>

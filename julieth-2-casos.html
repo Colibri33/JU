@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3 casos, 3 roles</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF9EE; --green:#0B4A2E; --pink:#F25C9C; --coral:#FF6F5B;
+    --yellow:#FBD92F; --blue:#3BB8EE; --purple:#9B7BF0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Poppins',system-ui,sans-serif;background:var(--cream);color:var(--green);min-height:100vh;display:flex;justify-content:center;padding:18px}
+  .wrap{width:100%;max-width:860px}
+  header{text-align:center;margin-bottom:14px}
+  .tag{font-size:11px;letter-spacing:3px;font-weight:600;color:var(--pink);text-transform:uppercase}
+  h1{font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:clamp(24px,4vw,34px);font-weight:700;margin:2px 0}
+  .sub{font-size:14px;opacity:.85}
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0}
+  @media(max-width:620px){.roles{grid-template-columns:1fr}}
+  .role{border:none;cursor:pointer;border-radius:20px;padding:16px 12px;color:#fff;text-align:center;font-family:'Poppins';transition:transform .12s;position:relative}
+  .role:hover:not(:disabled){transform:translateY(-3px)}
+  .role:disabled{cursor:default}
+  .role .ic{font-size:30px}
+  .role .rn{font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:20px;font-weight:600;margin-top:4px}
+  .role .rc{font-size:11px;letter-spacing:1.5px;font-weight:600;text-transform:uppercase;opacity:.9;margin-top:2px}
+  .role .ok{position:absolute;top:8px;right:10px;background:#fff;color:var(--green);border-radius:999px;font-size:11px;font-weight:700;padding:2px 8px}
+  .r1{background:var(--blue);box-shadow:0 5px 0 #1f8fbf}
+  .r2{background:var(--pink);box-shadow:0 5px 0 #c63d78}
+  .r3{background:var(--purple);box-shadow:0 5px 0 #7158c4}
+  .role.done{opacity:.55}
+  .hint{text-align:center;font-size:13px;margin-top:6px}
+  .panel{background:#fff;border-radius:22px;padding:22px;box-shadow:0 4px 0 #f0e4cf}
+  .head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .badge{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+  .head .k{font-size:11px;letter-spacing:2px;font-weight:600;text-transform:uppercase;color:var(--pink)}
+  .head .t{font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:20px;font-weight:600}
+  .story{background:var(--cream);border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.5;margin-bottom:14px}
+  .q{font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:18px;font-weight:600;margin-bottom:10px}
+  .opt{display:block;width:100%;text-align:left;font-family:'Poppins';font-size:14px;background:#fff;border:2px solid #f0e4cf;border-radius:16px;padding:13px 16px;margin-bottom:9px;cursor:pointer;color:var(--green);transition:.15s}
+  .opt:hover:not(:disabled){border-color:var(--pink)}
+  .opt b{color:var(--pink);margin-right:6px}
+  .opt:disabled{cursor:default}
+  .opt.best{background:#e9f8ef;border-color:#2fb36b}
+  .opt.mid{background:#fff4d6;border-color:#e8c22a}
+  .opt.bad{background:#fde8ef;border-color:var(--pink)}
+  .cons{border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.5;margin-top:4px}
+  .cons.best{background:#e9f8ef}.cons.mid{background:#fff4d6}.cons.bad{background:#fde8ef}
+  .cons strong{font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:16px;display:block;margin-bottom:4px}
+  .cons .lbl{font-size:11px;letter-spacing:2px;font-weight:600;text-transform:uppercase;opacity:.7}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .chip{font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--green);color:#fff}
+  .btn{font-family:'Fredoka','Trebuchet MS',sans-serif;font-weight:600;font-size:16px;border:none;border-radius:999px;padding:11px 22px;cursor:pointer;background:var(--yellow);color:var(--green);box-shadow:0 4px 0 #d8b915}
+  .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #d8b915}
+  .btn.alt{background:#fff;box-shadow:0 4px 0 #eadfcb}
+  .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .hide{display:none!important}
+  .medal{width:110px;height:110px;border-radius:50%;margin:4px auto 12px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:30px;font-weight:700;color:var(--green);box-shadow:0 5px 0 rgba(0,0,0,.12)}
+  .end h2{font-family:'Fredoka','Trebuchet MS',sans-serif;font-size:28px;text-align:center}
+  .end p{text-align:center;font-size:14px;margin-top:6px;line-height:1.5}
+  .sum{margin-top:14px;display:grid;gap:8px}
+  .sum div{background:var(--cream);border-radius:14px;padding:10px 14px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="tag">Módulo 05 · Casos en la práctica</div>
+    <h1>3 casos, 3 roles</h1>
+    <p class="sub">Presión, conflicto y falta de compromiso. Cada decisión tiene su consecuencia.</p>
+  </header>
+
+  <section id="menu">
+    <div class="roles" id="roles"></div>
+    <p class="hint" id="hint">Elige un rol para empezar.</p>
+  </section>
+
+  <section id="case" class="hide">
+    <div class="panel">
+      <div class="head">
+        <div class="badge" id="cBadge"></div>
+        <div><div class="k" id="cKind"></div><div class="t" id="cRole"></div></div>
+      </div>
+      <div class="story" id="cStory"></div>
+      <div class="q">¿Qué decides?</div>
+      <div id="cOpts"></div>
+      <div id="cCons"></div>
+      <div class="row hide" id="cBack"><button class="btn" onclick="back()">Volver a los roles ›</button></div>
+    </div>
+  </section>
+
+  <section id="end" class="hide end">
+    <div class="panel">
+      <div class="medal" id="medal"></div>
+      <h2 id="eTitle"></h2>
+      <p id="eText"></p>
+      <div class="sum" id="eSum"></div>
+      <div class="row"><button class="btn alt" onclick="restart()">Volver a intentarlo</button></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const CASES = [
+  {
+    cls:"r1", color:"var(--blue)", icon:"⚽", role:"Entrenadora", kind:"Caso: presión por ganar",
+    desc:"Equipo de fútbol · torneo del colegio",
+    story:"Faltan dos días para el torneo del colegio. El papá de Samuel te busca después del entrenamiento y te dice delante de varios niños: “Si quiere ganar, ponga solo a los buenos. Los demás que vean desde la banca”.",
+    opts:[
+      {t:"Le hago caso: en el torneo juegan solo los más hábiles para asegurar el triunfo.", lv:"bad",
+       c:"Ganan un partido, pero cinco niños no juegan ni un minuto. Dos de ellos dejan de venir a entrenar. El equipo aprende que solo vale quien gana.",
+       chips:["Se pierde: Amistad","Se pierde: Respeto"]},
+      {t:"Le agradezco el interés, le pido hablar a solas y le explico que en el colegio todos juegan. Rotaré a todos y nuestra meta será mejorar como equipo.", lv:"best",
+       c:"El papá no queda del todo convencido, pero respeta la regla porque la explicaste con calma. Todos juegan, el equipo mejora y Samuel celebra el gol de un compañero.",
+       chips:["Excelencia","Respeto","Comunicación","Liderazgo"]},
+      {t:"Le respondo molesta que la entrenadora soy yo y que no se meta.", lv:"mid",
+       c:"Mantienes a todos jugando, pero el conflicto con la familia crece y los niños vieron a dos adultos discutir. Tenías razón, pero faltó inteligencia emocional.",
+       chips:["Falta: Int. emocional","Falta: Comunicación"]}
+    ]
+  },
+  {
+    cls:"r2", color:"var(--pink)", icon:"🏊", role:"Docente", kind:"Caso: conflicto entre niños",
+    desc:"Clase de natación · curso completo",
+    story:"En la clase de natación, Valentina y Matías se empujan en el borde de la piscina porque ambos quieren salir primero en el relevo. Valentina casi cae al agua y los demás niños empiezan a gritar.",
+    opts:[
+      {t:"Los saco a los dos de la clase sin escucharlos. Así aprenden.", lv:"mid",
+       c:"El peligro se detiene, pero ninguno entiende qué hizo mal y vuelven a pelear la siguiente clase. Castigar sin explicar es obedecer por miedo, no respeto.",
+       chips:["Falta: Comunicación","Falta: Int. emocional"]},
+      {t:"Detengo la actividad, los separo, escucho a cada uno con calma, recuerdo la regla de turnos y les pido que hagan el siguiente relevo en el mismo equipo.", lv:"best",
+       c:"Los dos se calman y entienden por qué la regla los cuida. En el relevo terminan animándose. El grupo ve que los conflictos se resuelven hablando.",
+       chips:["Respeto","Amistad","Int. emocional","Resolución de problemas"]},
+      {t:"Dejo que lo arreglen solos; son cosas de niños.", lv:"bad",
+       c:"El empujón se repite y un niño se golpea con el borde. Las familias se quejan. En la piscina, la seguridad no puede esperar.",
+       chips:["Se pierde: Respeto","Falta: Liderazgo"]}
+    ]
+  },
+  {
+    cls:"r3", color:"var(--purple)", icon:"📋", role:"Gestora", kind:"Caso: falta de compromiso",
+    desc:"Horarios de cancha y piscina",
+    story:"Organizas los horarios de cancha y piscina del colegio. El profe Andrés llega tarde por tercera semana y deja el material sin guardar. Su grupo pierde 15 minutos de clase y el siguiente grupo no encuentra los balones.",
+    opts:[
+      {t:"Lo reporto de inmediato a la dirección sin hablar con él.", lv:"mid",
+       c:"Andrés recibe un llamado de atención, pero se siente atacado y deja de colaborar. El problema de fondo sigue igual.",
+       chips:["Falta: Comunicación","Falta: Trabajo en equipo"]},
+      {t:"Converso con él en privado, le pregunto qué le pasa y acordamos juntos un horario realista y una lista de chequeo para el material.", lv:"best",
+       c:"Andrés te cuenta que tiene un cruce de horarios con otra sede. Ajustan el turno, la lista funciona y los niños vuelven a tener su clase completa.",
+       chips:["Respeto","Trabajo en equipo","Resolución de problemas","Comunicación"]},
+      {t:"No digo nada y yo misma guardo su material y cubro su clase cada vez.", lv:"bad",
+       c:"Durante un mes todo parece funcionar, pero te agotas, descuidas tus otras tareas y Andrés nunca sabe que había un problema.",
+       chips:["Falta: Liderazgo","Falta: Comunicación"]}
+    ]
+  }
+];
+
+const LV = {best:{p:2,t:"¡Decisión de oro!"}, mid:{p:1,t:"Bien intencionada, pero…"}, bad:{p:0,t:"Consecuencia difícil"}};
+let results = {};
+
+function renderMenu(){
+  const r=document.getElementById("roles"); r.innerHTML="";
+  CASES.forEach((c,i)=>{
+    const done = results[i]!==undefined;
+    const b=document.createElement("button");
+    b.className=`role ${c.cls}${done?" done":""}`; b.disabled=done;
+    b.innerHTML=`${done?'<span class="ok">✓ Listo</span>':""}<div class="ic">${c.icon}</div><div class="rn">${c.role}</div><div class="rc">${c.kind.replace("Caso: ","")}</div>`;
+    b.onclick=()=>openCase(i);
+    r.appendChild(b);
+  });
+  const n=Object.keys(results).length;
+  document.getElementById("hint").textContent = n===0?"Elige un rol para empezar.":`Casos resueltos: ${n}/3`;
+}
+
+let cur=0;
+function openCase(i){
+  cur=i; const c=CASES[i];
+  document.getElementById("menu").classList.add("hide");
+  document.getElementById("case").classList.remove("hide");
+  const bd=document.getElementById("cBadge"); bd.textContent=c.icon; bd.style.background=c.color;
+  document.getElementById("cKind").textContent=c.kind;
+  document.getElementById("cRole").textContent=`${c.role} · ${c.desc}`;
+  document.getElementById("cStory").textContent=c.story;
+  document.getElementById("cCons").innerHTML="";
+  document.getElementById("cBack").classList.add("hide");
+  const box=document.getElementById("cOpts"); box.innerHTML="";
+  c.opts.forEach((o,j)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.innerHTML=`<b>${String.fromCharCode(65+j)})</b>${o.t}`;
+    b.onclick=()=>decide(j);
+    box.appendChild(b);
+  });
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function decide(j){
+  const c=CASES[cur], o=c.opts[j];
+  results[cur]=j;
+  const btns=document.querySelectorAll("#cOpts .opt");
+  btns.forEach((b,k)=>{b.disabled=true; if(k===j)b.classList.add(o.lv); else if(c.opts[k].lv==="best")b.classList.add("best")});
+  document.getElementById("cCons").innerHTML=
+    `<div class="cons ${o.lv}"><span class="lbl">Consecuencia</span><strong>${LV[o.lv].t}</strong>${o.c}
+     <div class="chips">${o.chips.map(x=>`<span class="chip">${x}</span>`).join("")}</div></div>`;
+  const last = Object.keys(results).length===CASES.length;
+  const bk=document.getElementById("cBack"); bk.classList.remove("hide");
+  bk.querySelector("button").textContent = last?"Ver mi resultado ›":"Volver a los roles ›";
+}
+
+function back(){
+  document.getElementById("case").classList.add("hide");
+  if(Object.keys(results).length===CASES.length){showEnd();return}
+  document.getElementById("menu").classList.remove("hide");
+  renderMenu();
+}
+
+function showEnd(){
+  document.getElementById("end").classList.remove("hide");
+  let pts=0; const sum=document.getElementById("eSum"); sum.innerHTML="";
+  CASES.forEach((c,i)=>{
+    const o=c.opts[results[i]]; pts+=LV[o.lv].p;
+    const mark=o.lv==="best"?"🟢":o.lv==="mid"?"🟡":"🔴";
+    sum.innerHTML+=`<div>${mark} <b>${c.role}</b> — ${LV[o.lv].t}</div>`;
+  });
+  const m=document.getElementById("medal"), t=document.getElementById("eTitle"), x=document.getElementById("eText");
+  if(pts>=6){m.style.background="var(--yellow)";m.textContent="ORO";t.textContent="¡Decidiste como profesional!";}
+  else if(pts>=4){m.style.background="#d9dde3";m.textContent="PLATA";t.textContent="¡Muy cerca del oro!";}
+  else{m.style.background="#e7a768";m.textContent="BRONCE";t.textContent="Vale la pena repasar";}
+  x.innerHTML=`Puntaje: ${pts}/6.<br>Las mejores decisiones unen un valor olímpico con una habilidad blanda: escuchar, explicar y buscar soluciones juntos.`;
+}
+
+function restart(){
+  results={};
+  document.getElementById("end").classList.add("hide");
+  document.getElementById("menu").classList.remove("hide");
+  renderMenu();
+}
+
+renderMenu();
+</script>
+</body>
+</html>
